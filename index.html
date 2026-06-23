@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QR Export</title>
+</head>
+<body>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+
+const model  = params.get("model") || "";
+const fab    = params.get("fab") || "";
+const dealer = params.get("dealer") || "";
+const phone  = params.get("phone") || "";
+const mail   = params.get("mail") || "";
+
+const csv =
+`Model,Fab Number,Dealer Name,Dealer Number,Dealer Mail
+${model},${fab},${dealer},${phone},${mail}`;
+
+const blob = new Blob([csv], { type: "text/csv" });
+
+const a = document.createElement("a");
+a.href = URL.createObjectURL(blob);
+a.download = "compressor_details.csv";
+a.click();
+
+document.body.innerHTML =
+"<h2>Download started...</h2>";
+</script>
+
+</body>
+</html>
