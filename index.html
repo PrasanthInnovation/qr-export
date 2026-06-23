@@ -49,7 +49,7 @@ button {
             <th>Fault Name</th>
             <th>Date</th>
             <th>Time</th>
-            <th>Pressure (bar)</th>
+            <th>Pressure</th>
             <th>Airend Outlet Temp (°C)</th>
             <th>Status</th>
         </tr>
@@ -67,83 +67,98 @@ button {
 <script>
 
 /* -------------------- Fault Mapping -------------------- */
-
+/*
+ * Index 0 is unused (empty). Fault codes from the controller are 1-based:
+ *   Faults  : 1–32  (MENU_FAULT_REG_COUNT enum)
+ *   Warnings: 33–64 (warn_is + 33)
+ */
 const SAC_FAULT_BITS_N4 = [
-"Emergency Stop",
-"Pressure Probe Failure",
-"High Temperature",
-"Temperature Probe Failure",
-"HSP (AS)",
-"Sump Probe Failure",
-"Low Voltage",
-"Main Motor Overload",
-"Cooler Motor Overload",
-"HSP (AD)",
-"Reverse Rotation / Phase Fail",
-"Dis.Pr Not Developing",
-"Sump Pr Not Developing",
-"Power interruption",
-"Dryer Trip",
-"Phase Loss / Reverse",
-"Winding Tr High",
-"Winding Tr Probe Fail",
-"Low Dew Point Trip",
-"Ambient Tr Probe Fail",
-"Ambient Tr High",
-"Stage 2 Tr Probe Fail",
-"Stage 2 Tr High",
-"Stage 1 Tr Probe Fail",
-"Stage 1 Tr High",
-"Stage 1 Seal Air Pr Probe Fail",
-"Stage 1 Seal Air Pr High",
-"Oil Pr Probe Fail",
-"Oil Pr High",
-"Water Pr Probe Fail",
-"Water Pr High",
-"ITV Feedback",
-"Change Valve Kit",
-"Dryer Probe Failure",
-"Dryer off-LowDP Warn",
-"High Dew Point",
-"High Diff. Pressure",
-"Change Air Filter",
-"Change Oil Filter",
-"Change Oil Separator",
-"Change Oil",
-"Change Grease",
-"Exceeded Start/Stop Hrs",
-"Differential Pressure Air Filter",
-"Differential Pressure Oil Filter",
-"Warn Temperature",
-"Dryer off - IP Warn",
-"Calibration Error",
-"EEPROM Error",
-"Change Pre Filter",
-"Change MPV Kit",
-"Change BDV Kit",
-"Change Solenoid Kit",
-"Change ADV Kit",
-"Change PF/FF",
-"Change CF",
-"Check Oil Sample Test",
-"Warranty Expired",
-"Change SPM"
+    "",                                       //  0 - unused (codes start at 1)
+
+    /* ---- Faults (1–32) ---- */
+    "Emergency Stop",                         //  1: FT_EMERGENCY_STOP
+    "Discharge Pressure Probe Failure",       //  2: FT_PROBE_FAIL
+    "Discharge Temperature High",             //  3: FT_DISCHARGE_TR_HIGH
+    "Discharge Temperature Probe Failure",    //  4: FT_TR_PROBE_FAIL
+    "HSP (AS)",                               //  5: FT_SUMP_PR_HIGH
+    "Sump Pressure Probe Failure",            //  6: FT_SUMP_PR_PROBE_FAIL
+    "Low Voltage",                            //  7: FT_VOLT
+    "Main Motor Overload",                    //  8: FT_MAIN_MOTOR_OVERLOAD
+    "Cooler Motor Overload",                  //  9: FT_COOLER_MOTOR_OVERLOAD
+    "HSP (AD)",                               // 10: FT_DICHARGE_PR_HIGH
+    "Reverse Rotation / Phase Fail",          // 11: FT_MOTOR_REVERSE_ROTATION
+    "Dis.Pr Not Developing",                  // 12: FT_DISCHARGE_PR_NOT_DEVELOPING
+    "Sump Pr Not Developing",                 // 13: FT_SUMP_PR_NOT_DEVELOPING
+    "Power Interruption",                     // 14: FT_POWER_FAILURE
+    "Dryer Trip",                             // 15: FT_DRYER_TRIP
+    "Phase Loss / Reverse",                   // 16: FT_PHASE_LOSS_REV
+    "Winding Temperature High",               // 17: FT_WINDING_TR_HIGH
+    "Winding Probe Failure",                  // 18: FT_WINDING_TR_PROBE_FAIL
+    "Low Dew Point Trip",                     // 19: FT_LOW_DEW_POINT_TRIP
+    "Ambient Temp Probe Failure",             // 20: FT_AMBIENT_TR_PROBE_FAIL
+    "Ambient Temperature High",               // 21: FT_AMBIENT_TR_HIGH
+    "IO Module Disconnected",                 // 22: FT_IO_MODULE_DISCONNECTED
+    "ETV PDP Trip",                           // 23: FT_ETV_PDP_FAILURE_TRIP
+    "Stage 1 Temp Probe Failure",             // 24: FT_STAGE_1_TR_PROBE_FAILURE
+    "Stage 1 Temperature High",               // 25: FT_STAGE_1_TR_HIGH
+    "HRS Pressure Probe Failure",             // 26: FT_HRS_WATER_PR_PROBE_FAIL
+    "HRS Water Pressure High",                // 27: FT_HRS_WATER_PR_HIGH
+    "HRS Water Pressure Low",                 // 28: FT_HRS_WATER_PR_LOW
+    "Oil Pressure High",                      // 29: FT_OIL_PR_HIGH
+    "HRS Oil Temp Probe Failure",             // 30: FT_HRS_OIL_TEMP_PROBE_FAIL
+    "Check Ball Valve Position",              // 31: FT_CHECK_BALL_VALVE_POSITION
+    "ETV Feedback Trip",                      // 32: FT_ETV_FEEDBACK_TRIP
+
+    /* ---- Warnings (33–64, stored as warn_is + 33) ---- */
+    "W: Change Valve Kit",                    // 33: warn_is=0
+    "W: Dryer Probe Failure",                 // 34: warn_is=1
+    "W: Dryer off-LowDP Warn",                // 35: warn_is=2
+    "W: High Dew Point",                      // 36: warn_is=3
+    "W: High Diff. Pressure",                 // 37: warn_is=4
+    "W: Change Air Filter",                   // 38: warn_is=5
+    "W: Change Oil Filter",                   // 39: warn_is=6
+    "W: Change Oil Separator",                // 40: warn_is=7
+    "W: Change Oil",                          // 41: warn_is=8
+    "W: Change Grease",                       // 42: warn_is=9
+    "W: Exceeded Start/Stop Hrs",             // 43: warn_is=10
+    "W: Differential Pressure Air Filter",    // 44: warn_is=11
+    "W: Differential Pressure Oil Filter",    // 45: warn_is=12
+    "W: Warn Temperature",                    // 46: warn_is=13
+    "W: Dryer off - IP Warn",                 // 47: warn_is=14
+    "W: Calibration Error",                   // 48: warn_is=15
+    "W: EEPROM Error",                        // 49: warn_is=16
+    "W: Change Pre Filter",                   // 50: warn_is=17
+    "W: Change MPV Kit",                      // 51: warn_is=18
+    "W: Change BDV Kit",                      // 52: warn_is=19
+    "W: Change Solenoid Kit",                 // 53: warn_is=20
+    "W: Change ADV Kit",                      // 54: warn_is=21
+    "W: Change PF/FF",                        // 55: warn_is=22
+    "W: Change CF",                           // 56: warn_is=23
+    "W: Severe High Load",                    // 57: warn_is=24
+    "W: Warranty Expired",                    // 58: warn_is=25
+    "W: Change SPM",                          // 59: warn_is=26
+    "W: Very High Load Count",                // 60: warn_is=27
+    "W: ETV Feedback Warn",                   // 61: warn_is=28
+    "W: HRS Pressure Low Warn",               // 62: warn_is=29
+    "W: High Oil Temperature",                // 63: warn_is=30
+    "W: High Load Count"                      // 64: warn_is=31
 ];
 
+/* Compressor status codes (READY=0 … WARNING=12) */
 const Compressor_Status_List = [
-"READY",
-"STAR",
-"RUN",
-"RUN_LOAD",
-"RUN_UNLOAD",
-"STOP_BUSY",
-"IDLE",
-"START_INHIBIT",
-"TR_INHIBIT",
-"START_ACK_WAIT",
-"STANDBY",
-"FAULT",
-"WARNING"
+    "READY",            //  0
+    "STAR",             //  1
+    "RUN",              //  2
+    "RUN_LOAD",         //  3
+    "RUN_UNLOAD",       //  4
+    "STOP_BUSY",        //  5
+    "IDLE",             //  6
+    "START_INHIBIT",    //  7
+    "TR_INHIBIT",       //  8
+    "START_ACK_WAIT",   //  9
+    "STANDBY",          // 10
+    "FAULT",            // 11
+    "WARNING"           // 12
 ];
 
 /* -------------------- Parse URL -------------------- */
@@ -159,32 +174,49 @@ if(faultData)
 
     const tbody = document.querySelector("#faultTable tbody");
 
-    records.forEach((record, index) =>
+    let displayIndex = 0;
+
+    records.forEach((record) =>
     {
         const fields = record.split(",");
 
         if(fields.length < 6)
             return;
 
-        const errorCode = parseInt(fields[0]);
+        const errorCode  = parseInt(fields[0]);
         const statusCode = parseInt(fields[1]);
 
         const date = fields[2];
         const time = fields[3];
 
-        const pressure = parseFloat(fields[4]) / 10.0;
-        const temp = fields[5];
+        /* errorCode is 1-based; SAC_FAULT_BITS_N4[0] is intentionally empty. */
+        const rawFaultName = SAC_FAULT_BITS_N4[errorCode] || "";
 
-        const faultName =
-            SAC_FAULT_BITS_N4[errorCode] || ("Fault " + errorCode);
+        /* Mirror fault_report_row_create() condition:
+         * skip row if fault string is empty or starts with '0' (invalid entry). */
+        if(errorCode === 0 || rawFaultName === "")
+            return;
+
+        /* Truncate fault name to 40 characters (matches fault[40] = '\0'). */
+        const faultName = rawFaultName.substring(0, 40);
+
+        /* display_Pr is already a formatted string from the controller
+         * (e.g. "7.0 Bar" or "70 Psi").
+         * Exception: FT_PROBE_FAIL (code 2) — pressure probe failed, show "---". */
+        const pressure = (errorCode === 2) ? "---" : fields[4];
+
+        /* FT_TR_PROBE_FAIL (code 4) — temperature probe failed, show "---". */
+        const temp = (errorCode === 4) ? "---" : fields[5];
 
         const statusName =
             Compressor_Status_List[statusCode] || ("Status " + statusCode);
 
+        displayIndex++;
+
         const row = document.createElement("tr");
 
         row.innerHTML =
-            `<td>${index + 1}</td>
+            `<td>${displayIndex}</td>
              <td>${faultName}</td>
              <td>${date}</td>
              <td>${time}</td>
@@ -195,7 +227,7 @@ if(faultData)
         tbody.appendChild(row);
 
         csvRows.push([
-            index + 1,
+            displayIndex,
             faultName,
             date,
             time,
@@ -211,7 +243,7 @@ if(faultData)
 function downloadCSV()
 {
     let csv =
-"S.No,Fault Name,Date,Time,Pressure(bar),Airend Outlet Temp(C),Status\n";
+"S.No,Fault Name,Date,Time,Pressure,Airend Outlet Temp(C),Status\n";
 
     csvRows.forEach(row =>
     {
