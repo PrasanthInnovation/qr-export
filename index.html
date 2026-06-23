@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Compressor Details</title>
+<title>ELGi Fault Report</title>
 
 <style>
 body {
@@ -15,29 +15,23 @@ h2 {
 }
 
 table {
-    border-collapse: collapse;
     width: 100%;
-    max-width: 800px;
-    margin: auto;
+    border-collapse: collapse;
 }
 
 th, td {
     border: 1px solid #000;
-    padding: 10px;
-    text-align: left;
+    padding: 8px;
+    text-align: center;
 }
 
 th {
     background-color: #f2f2f2;
 }
 
-.button-container {
-    text-align: center;
-    margin-top: 20px;
-}
-
 button {
     padding: 10px 20px;
+    margin-top: 15px;
     font-size: 16px;
     cursor: pointer;
 }
@@ -46,52 +40,199 @@ button {
 
 <body>
 
-<h2>Compressor Details</h2>
+<h2>ELGi Fault History</h2>
 
-<table>
-<tr><th>Field</th><th>Value</th></tr>
-<tr><td>Model</td><td id="model"></td></tr>
-<tr><td>Fab Number</td><td id="fab"></td></tr>
-<tr><td>Dealer Name</td><td id="dealer"></td></tr>
-<tr><td>Dealer Number</td><td id="phone"></td></tr>
-<tr><td>Dealer Mail</td><td id="mail"></td></tr>
+<table id="faultTable">
+    <thead>
+        <tr>
+            <th>S.No</th>
+            <th>Fault Name</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Pressure (bar)</th>
+            <th>Airend Outlet Temp (°C)</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
 </table>
 
-<div class="button-container">
-    <button onclick="downloadCSV()">Download CSV</button>
-</div>
+<br>
+
+<button onclick="downloadCSV()">
+    Download CSV
+</button>
 
 <script>
 
+/* -------------------- Fault Mapping -------------------- */
+
+const SAC_FAULT_BITS_N4 = [
+"Emergency Stop",
+"Pressure Probe Failure",
+"High Temperature",
+"Temperature Probe Failure",
+"HSP (AS)",
+"Sump Probe Failure",
+"Low Voltage",
+"Main Motor Overload",
+"Cooler Motor Overload",
+"HSP (AD)",
+"Reverse Rotation / Phase Fail",
+"Dis.Pr Not Developing",
+"Sump Pr Not Developing",
+"Power interruption",
+"Dryer Trip",
+"Phase Loss / Reverse",
+"Winding Tr High",
+"Winding Tr Probe Fail",
+"Low Dew Point Trip",
+"Ambient Tr Probe Fail",
+"Ambient Tr High",
+"Stage 2 Tr Probe Fail",
+"Stage 2 Tr High",
+"Stage 1 Tr Probe Fail",
+"Stage 1 Tr High",
+"Stage 1 Seal Air Pr Probe Fail",
+"Stage 1 Seal Air Pr High",
+"Oil Pr Probe Fail",
+"Oil Pr High",
+"Water Pr Probe Fail",
+"Water Pr High",
+"ITV Feedback",
+"Change Valve Kit",
+"Dryer Probe Failure",
+"Dryer off-LowDP Warn",
+"High Dew Point",
+"High Diff. Pressure",
+"Change Air Filter",
+"Change Oil Filter",
+"Change Oil Separator",
+"Change Oil",
+"Change Grease",
+"Exceeded Start/Stop Hrs",
+"Differential Pressure Air Filter",
+"Differential Pressure Oil Filter",
+"Warn Temperature",
+"Dryer off - IP Warn",
+"Calibration Error",
+"EEPROM Error",
+"Change Pre Filter",
+"Change MPV Kit",
+"Change BDV Kit",
+"Change Solenoid Kit",
+"Change ADV Kit",
+"Change PF/FF",
+"Change CF",
+"Check Oil Sample Test",
+"Warranty Expired",
+"Change SPM"
+];
+
+const Compressor_Status_List = [
+"READY",
+"STAR",
+"RUN",
+"RUN_LOAD",
+"RUN_UNLOAD",
+"STOP_BUSY",
+"IDLE",
+"START_INHIBIT",
+"TR_INHIBIT",
+"START_ACK_WAIT",
+"STANDBY",
+"FAULT",
+"WARNING"
+];
+
+/* -------------------- Parse URL -------------------- */
+
 const params = new URLSearchParams(window.location.search);
+const faultData = params.get("f");
 
-const model  = params.get("model")  || "";
-const fab    = params.get("fab")    || "";
-const dealer = params.get("dealer") || "";
-const phone  = params.get("phone")  || "";
-const mail   = params.get("mail")   || "";
+let csvRows = [];
 
-document.getElementById("model").textContent  = model;
-document.getElementById("fab").textContent    = fab;
-document.getElementById("dealer").textContent = dealer;
-document.getElementById("phone").textContent  = phone;
-document.getElementById("mail").textContent   = mail;
+if(faultData)
+{
+    const records = faultData.split("|");
+
+    const tbody = document.querySelector("#faultTable tbody");
+
+    records.forEach((record, index) =>
+    {
+        const fields = record.split(",");
+
+        if(fields.length < 6)
+            return;
+
+        const errorCode = parseInt(fields[0]);
+        const statusCode = parseInt(fields[1]);
+
+        const date = fields[2];
+        const time = fields[3];
+
+        const pressure = parseFloat(fields[4]) / 10.0;
+        const temp = fields[5];
+
+        const faultName =
+            SAC_FAULT_BITS_N4[errorCode] || ("Fault " + errorCode);
+
+        const statusName =
+            Compressor_Status_List[statusCode] || ("Status " + statusCode);
+
+        const row = document.createElement("tr");
+
+        row.innerHTML =
+            `<td>${index + 1}</td>
+             <td>${faultName}</td>
+             <td>${date}</td>
+             <td>${time}</td>
+             <td>${pressure}</td>
+             <td>${temp}</td>
+             <td>${statusName}</td>`;
+
+        tbody.appendChild(row);
+
+        csvRows.push([
+            index + 1,
+            faultName,
+            date,
+            time,
+            pressure,
+            temp,
+            statusName
+        ]);
+    });
+}
+
+/* -------------------- CSV Download -------------------- */
 
 function downloadCSV()
 {
-    const csv =
-`Model,Fab Number,Dealer Name,Dealer Number,Dealer Mail
-${model},${fab},${dealer},${phone},${mail}`;
+    let csv =
+"S.No,Fault Name,Date,Time,Pressure(bar),Airend Outlet Temp(C),Status\n";
 
-    const blob = new Blob([csv], {type: "text/csv;charset=utf-8;"});
+    csvRows.forEach(row =>
+    {
+        csv += row.join(",") + "\n";
+    });
+
+    const blob = new Blob(
+        [csv],
+        {type: "text/csv;charset=utf-8;"}
+    );
 
     const link = document.createElement("a");
 
     link.href = URL.createObjectURL(blob);
-    link.download = "compressor_details.csv";
+
+    link.download = "ELGi_Fault_Report.csv";
 
     document.body.appendChild(link);
+
     link.click();
+
     document.body.removeChild(link);
 }
 
