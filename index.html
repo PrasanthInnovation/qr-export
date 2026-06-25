@@ -8,6 +8,27 @@
 body {
     font-family: Arial, sans-serif;
     margin: 20px;
+    position: relative;
+}
+
+.header-info {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    text-align: right;
+    border: 1px solid #ccc;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+}
+
+.header-info div {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.header-label {
+    font-weight: bold;
 }
 
 h2 {
@@ -39,6 +60,8 @@ button {
 </head>
 
 <body>
+
+<div class="header-info" id="headerInfo"></div>
 
 <h2>ELGi Fault History</h2>
 
@@ -165,8 +188,23 @@ const Compressor_Status_List = [
 
 const params = new URLSearchParams(window.location.search);
 const faultData = params.get("f");
+const fabNumber = params.get("fab") || "Unknown";
+const modelNumber = params.get("model") || "Unknown";
 
 let csvRows = [];
+let csvFilename = "ELGi_Fault_Report.csv";
+
+/* Display fab and model in header */
+const headerInfo = document.getElementById("headerInfo");
+if(headerInfo)
+{
+    headerInfo.innerHTML =
+        `<div><span class="header-label">Fab Number:</span> ${fabNumber}</div>
+         <div><span class="header-label">Model:</span> ${modelNumber}</div>`;
+
+    /* Set CSV filename with fab number */
+    csvFilename = fabNumber + "_Fault_Report.csv";
+}
 
 if(faultData)
 {
@@ -186,8 +224,18 @@ if(faultData)
         const errorCode  = parseInt(fields[0]);
         const statusCode = parseInt(fields[1]);
 
-        const date = fields[2];
-        const time = fields[3];
+        /* Decompress date: YYMMDD → DD/MM/YYYY format. */
+        const dateCompressed = fields[2];
+        const dateYY = dateCompressed.substring(0, 2);
+        const dateMM = dateCompressed.substring(2, 4);
+        const dateDD = dateCompressed.substring(4, 6);
+        const date = `${dateDD}/${dateMM}/20${dateYY}`;
+
+        /* Decompress time: HHMM → HH:MM format. */
+        const timeCompressed = fields[3];
+        const timeHH = timeCompressed.substring(0, 2);
+        const timeMM = timeCompressed.substring(2, 4);
+        const time = `${timeHH}:${timeMM}`;
 
         /* errorCode is 1-based; SAC_FAULT_BITS_N4[0] is intentionally empty. */
         const rawFaultName = SAC_FAULT_BITS_N4[errorCode] || "";
@@ -200,13 +248,31 @@ if(faultData)
         /* Truncate fault name to 40 characters (matches fault[40] = '\0'). */
         const faultName = rawFaultName.substring(0, 40);
 
-        /* display_Pr is already a formatted string from the controller
-         * (e.g. "7.0 Bar" or "70 Psi").
-         * Exception: FT_PROBE_FAIL (code 2) — pressure probe failed, show "---". */
-        const pressure = (errorCode === 2) ? "---" : fields[4];
+        /* Decompress pressure: handle unit prefix.
+         * "F" = probe failure (display "---")
+         * "B7.0" = 7.0 bar
+         * "P101" = 101 PSI */
+        let pressure;
+        if(fields[4] === "F")
+        {
+            pressure = "---";
+        }
+        else if(fields[4][0] === "B")
+        {
+            pressure = fields[4].substring(1) + " bar";
+        }
+        else if(fields[4][0] === "P")
+        {
+            pressure = fields[4].substring(1) + " PSI";
+        }
+        else
+        {
+            pressure = fields[4];  /* fallback */
+        }
 
-        /* FT_TR_PROBE_FAIL (code 4) — temperature probe failed, show "---". */
-        const temp = (errorCode === 4) ? "---" : fields[5];
+        /* Decompress temperature: "F" means probe failure (display "---"),
+         * otherwise use the numeric value directly. */
+        const temp = (fields[5] === "F") ? "---" : fields[5];
 
         const statusName =
             Compressor_Status_List[statusCode] || ("Status " + statusCode);
@@ -259,7 +325,7 @@ function downloadCSV()
 
     link.href = URL.createObjectURL(blob);
 
-    link.download = "ELGi_Fault_Report.csv";
+    link.download = csvFilename;
 
     document.body.appendChild(link);
 
