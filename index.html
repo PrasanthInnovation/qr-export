@@ -1,359 +1,217 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>ELGi Fault Report</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday, Preity 🎂</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 <style>
-body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-}
+  :root{
+    --plum:#3a1f3d;
+    --rose:#e8657f;
+    --peach:#ffb997;
+    --gold:#f2c14e;
+    --cream:#fff6ee;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    font-family:"Inter",sans-serif;
+    background:
+      radial-gradient(1200px 800px at 20% -10%, #5a2d5e 0%, transparent 55%),
+      radial-gradient(1000px 900px at 110% 120%, #7a3350 0%, transparent 55%),
+      var(--plum);
+    color:var(--cream);
+    min-height:100%;
+    display:grid;
+    place-items:center;
+    overflow-x:hidden;
+    text-align:center;
+    padding:32px 20px;
+  }
+  .card{
+    position:relative;
+    max-width:640px;
+    z-index:2;
+  }
+  .eyebrow{
+    font-size:15px;
+    letter-spacing:.02em;
+    color:var(--peach);
+    opacity:0;
+    animation:rise .8s ease .2s forwards;
+  }
+  h1{
+    font-family:"Fraunces",serif;
+    font-weight:600;
+    font-size:clamp(48px,12vw,104px);
+    line-height:.95;
+    margin:14px 0 8px;
+    background:linear-gradient(100deg,var(--gold),var(--peach),var(--rose));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    opacity:0;
+    animation:rise 1s ease .45s forwards;
+  }
+  h1 .name{
+    display:block;
+    font-style:italic;
+    font-weight:500;
+  }
+  p.msg{
+    font-size:clamp(17px,2.4vw,21px);
+    line-height:1.65;
+    max-width:46ch;
+    margin:22px auto 0;
+    color:#f6e3d8;
+    opacity:0;
+    animation:rise 1s ease .8s forwards;
+  }
+  .heart{
+    display:inline-block;
+    margin-top:34px;
+    font-size:34px;
+    cursor:pointer;
+    opacity:0;
+    animation:rise 1s ease 1.1s forwards;
+    transition:transform .2s ease;
+    user-select:none;
+  }
+  .heart:hover{transform:scale(1.2) rotate(-6deg)}
+  .hint{
+    display:block;
+    margin-top:10px;
+    font-size:13px;
+    color:var(--peach);
+    opacity:0;
+    animation:fade 1s ease 1.5s forwards;
+  }
+  @keyframes rise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fade{to{opacity:.7}}
 
-.header-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 20px;
-}
+  /* confetti + floating hearts */
+  .bit{
+    position:fixed;
+    top:-40px;
+    z-index:1;
+    pointer-events:none;
+    will-change:transform;
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.01ms!important}
+    .bit{display:none}
+  }
 
-h2 {
-    flex: 1;
-    text-align: center;
-    margin: 0;
-}
-
-.header-info {
-    text-align: right;
-    border: 1px solid #ccc;
-    padding: 10px 15px;
-    background-color: #f9f9f9;
-    border-radius: 4px;
-    min-width: 180px;
-    flex-shrink: 0;
-}
-
-.header-info div {
-    margin: 5px 0;
-    font-size: 14px;
-}
-
-.header-label {
-    font-weight: bold;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-th, td {
-    border: 1px solid #000;
-    padding: 8px;
-    text-align: center;
-}
-
-th {
-    background-color: #f2f2f2;
-}
-
-button {
-    padding: 10px 20px;
-    margin-top: 15px;
-    font-size: 16px;
-    cursor: pointer;
-}
+  /* video overlay */
+  .overlay{
+    position:fixed;
+    inset:0;
+    z-index:10;
+    background:rgba(20,8,22,.92);
+    backdrop-filter:blur(6px);
+    display:none;
+    place-items:center;
+    padding:24px;
+  }
+  .overlay.open{display:grid}
+  .video-wrap{
+    position:relative;
+    width:min(880px,100%);
+    animation:rise .5s ease;
+  }
+  video{
+    width:100%;
+    border-radius:16px;
+    box-shadow:0 30px 80px rgba(0,0,0,.5);
+    background:#000;
+    display:block;
+  }
+  .close{
+    position:absolute;
+    top:-14px;right:-14px;
+    width:40px;height:40px;
+    border-radius:50%;
+    border:none;
+    background:var(--rose);
+    color:#fff;
+    font-size:20px;
+    cursor:pointer;
+    box-shadow:0 6px 16px rgba(0,0,0,.4);
+  }
+  .close:hover{background:var(--gold);color:var(--plum)}
 </style>
 </head>
-
 <body>
+  <main class="card">
+    <div class="eyebrow">Hii Preety</div>
+    <h1>Happy Birthday,<span class="name">Preity Kumari</span></h1>
+    <p class="msg">Happy birthday, you ❤️🎂 I honestly feel terrible that I forgot your birthday. I hope you're having a beautiful day, and I wish this year brings you so much happiness, peace, and everything you deserve. ❤️</p>
+    <span class="heart" id="heart" title="tap me!">💛</span>
+    <span class="hint">tap the heart</span>
+  </main>
 
-<div class="header-container">
-    <h2>ELGi Fault History</h2>
-    <div class="header-info" id="headerInfo"></div>
-</div>
-
-<table id="faultTable">
-    <thead>
-        <tr>
-            <th>S.No</th>
-            <th>Fault Name</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Pressure</th>
-            <th>Airend Outlet Temp</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-    </tbody>
-</table>
-
-<br>
-
-<button onclick="downloadCSV()">
-    Download CSV
-</button>
+  <div class="overlay" id="overlay">
+    <div class="video-wrap">
+      <button class="close" id="close" title="close">×</button>
+      <video id="video" controls playsinline>
+        <source src="video.mp4" type="video/mp4">
+        Your browser can't play this video.
+      </video>
+    </div>
+  </div>
 
 <script>
-
-/* -------------------- Fault Mapping -------------------- */
-/*
- * Index 0 is unused (empty). Fault codes from the controller are 1-based:
- *   Faults  : 1–32  (MENU_FAULT_REG_COUNT enum)
- *   Warnings: 33–64 (warn_is + 33)
- */
-const SAC_FAULT_BITS_N4 = [
-    "",                                       //  0 - unused (codes start at 1)
-
-    /* ---- Faults (1–32) ---- */
-    "Emergency Stop",                         //  1: FT_EMERGENCY_STOP
-    "Discharge Pressure Probe Failure",       //  2: FT_PROBE_FAIL
-    "Discharge Temperature High",             //  3: FT_DISCHARGE_TR_HIGH
-    "Discharge Temperature Probe Failure",    //  4: FT_TR_PROBE_FAIL
-    "HSP (AS)",                               //  5: FT_SUMP_PR_HIGH
-    "Sump Pressure Probe Failure",            //  6: FT_SUMP_PR_PROBE_FAIL
-    "Low Voltage",                            //  7: FT_VOLT
-    "Main Motor Overload",                    //  8: FT_MAIN_MOTOR_OVERLOAD
-    "Cooler Motor Overload",                  //  9: FT_COOLER_MOTOR_OVERLOAD
-    "HSP (AD)",                               // 10: FT_DICHARGE_PR_HIGH
-    "Reverse Rotation / Phase Fail",          // 11: FT_MOTOR_REVERSE_ROTATION
-    "Dis.Pr Not Developing",                  // 12: FT_DISCHARGE_PR_NOT_DEVELOPING
-    "Sump Pr Not Developing",                 // 13: FT_SUMP_PR_NOT_DEVELOPING
-    "Power Interruption",                     // 14: FT_POWER_FAILURE
-    "Dryer Trip",                             // 15: FT_DRYER_TRIP
-    "Phase Loss / Reverse",                   // 16: FT_PHASE_LOSS_REV
-    "Winding Temperature High",               // 17: FT_WINDING_TR_HIGH
-    "Winding Probe Failure",                  // 18: FT_WINDING_TR_PROBE_FAIL
-    "Low Dew Point Trip",                     // 19: FT_LOW_DEW_POINT_TRIP
-    "Ambient Temp Probe Failure",             // 20: FT_AMBIENT_TR_PROBE_FAIL
-    "Ambient Temperature High",               // 21: FT_AMBIENT_TR_HIGH
-    "IO Module Disconnected",                 // 22: FT_IO_MODULE_DISCONNECTED
-    "ETV PDP Trip",                           // 23: FT_ETV_PDP_FAILURE_TRIP
-    "Stage 1 Temp Probe Failure",             // 24: FT_STAGE_1_TR_PROBE_FAILURE
-    "Stage 1 Temperature High",               // 25: FT_STAGE_1_TR_HIGH
-    "HRS Pressure Probe Failure",             // 26: FT_HRS_WATER_PR_PROBE_FAIL
-    "HRS Water Pressure High",                // 27: FT_HRS_WATER_PR_HIGH
-    "HRS Water Pressure Low",                 // 28: FT_HRS_WATER_PR_LOW
-    "Oil Pressure High",                      // 29: FT_OIL_PR_HIGH
-    "HRS Oil Temp Probe Failure",             // 30: FT_HRS_OIL_TEMP_PROBE_FAIL
-    "Check Ball Valve Position",              // 31: FT_CHECK_BALL_VALVE_POSITION
-    "ETV Feedback Trip",                      // 32: FT_ETV_FEEDBACK_TRIP
-
-    /* ---- Warnings (33–64, stored as warn_is + 33) ---- */
-    "W: Change Valve Kit",                    // 33: warn_is=0
-    "W: Dryer Probe Failure",                 // 34: warn_is=1
-    "W: Dryer off-LowDP Warn",                // 35: warn_is=2
-    "W: High Dew Point",                      // 36: warn_is=3
-    "W: High Diff. Pressure",                 // 37: warn_is=4
-    "W: Change Air Filter",                   // 38: warn_is=5
-    "W: Change Oil Filter",                   // 39: warn_is=6
-    "W: Change Oil Separator",                // 40: warn_is=7
-    "W: Change Oil",                          // 41: warn_is=8
-    "W: Change Grease",                       // 42: warn_is=9
-    "W: Exceeded Start/Stop Hrs",             // 43: warn_is=10
-    "W: Differential Pressure Air Filter",    // 44: warn_is=11
-    "W: Differential Pressure Oil Filter",    // 45: warn_is=12
-    "W: Warn Temperature",                    // 46: warn_is=13
-    "W: Dryer off - IP Warn",                 // 47: warn_is=14
-    "W: Calibration Error",                   // 48: warn_is=15
-    "W: EEPROM Error",                        // 49: warn_is=16
-    "W: Change Pre Filter",                   // 50: warn_is=17
-    "W: Change MPV Kit",                      // 51: warn_is=18
-    "W: Change BDV Kit",                      // 52: warn_is=19
-    "W: Change Solenoid Kit",                 // 53: warn_is=20
-    "W: Change ADV Kit",                      // 54: warn_is=21
-    "W: Change PF/FF",                        // 55: warn_is=22
-    "W: Change CF",                           // 56: warn_is=23
-    "W: Severe High Load",                    // 57: warn_is=24
-    "W: Warranty Expired",                    // 58: warn_is=25
-    "W: Change SPM",                          // 59: warn_is=26
-    "W: Very High Load Count",                // 60: warn_is=27
-    "W: ETV Feedback Warn",                   // 61: warn_is=28
-    "W: HRS Pressure Low Warn",               // 62: warn_is=29
-    "W: High Oil Temperature",                // 63: warn_is=30
-    "W: High Load Count"                      // 64: warn_is=31
-];
-
-/* Compressor status codes (READY=0 … WARNING=12) */
-const Compressor_Status_List = [
-    "READY",            //  0
-    "STAR",             //  1
-    "RUN",              //  2
-    "RUN_LOAD",         //  3
-    "RUN_UNLOAD",       //  4
-    "STOP_BUSY",        //  5
-    "IDLE",             //  6
-    "START_INHIBIT",    //  7
-    "TR_INHIBIT",       //  8
-    "START_ACK_WAIT",   //  9
-    "STANDBY",          // 10
-    "FAULT",            // 11
-    "WARNING"           // 12
-];
-
-/* -------------------- Parse URL -------------------- */
-
-const params = new URLSearchParams(window.location.search);
-const faultData = params.get("f");
-const fabNumber = params.get("fab") || "Unknown";
-const modelNumber = params.get("model") || "Unknown";
-const pressureUnit = params.get("pu") || "B";  /* B=bar, P=PSI (default bar) */
-const tempUnit = params.get("tu") || "C";      /* C=Celsius, H=Fahrenheit (default Celsius) */
-
-let csvRows = [];
-let csvFilename = "ELGi_Fault_Report.csv";
-
-/* Display fab and model in header */
-const headerInfo = document.getElementById("headerInfo");
-if(headerInfo)
-{
-    headerInfo.innerHTML =
-        `<div><span class="header-label">Fab Number:</span> ${fabNumber}</div>
-         <div><span class="header-label">Model:</span> ${modelNumber}</div>`;
-
-    /* Set CSV filename with fab number */
-    csvFilename = fabNumber + "_Fault_Report.csv";
+const colors = ['#f2c14e','#ffb997','#e8657f','#fff6ee','#ff8fa3'];
+function drop(count, fromCenter){
+  for(let i=0;i<count;i++){
+    const b=document.createElement('div');
+    b.className='bit';
+    const heart = Math.random()>.6;
+    b.textContent = heart ? ['💛','🌸','✨','💗'][Math.floor(Math.random()*4)] : '';
+    const size = heart ? (16+Math.random()*18) : (6+Math.random()*8);
+    if(!heart){
+      b.style.width=size+'px';
+      b.style.height=(size*0.5)+'px';
+      b.style.background=colors[Math.floor(Math.random()*colors.length)];
+      b.style.borderRadius='2px';
+    }else{
+      b.style.fontSize=size+'px';
+    }
+    const startX = fromCenter ? window.innerWidth/2 : Math.random()*window.innerWidth;
+    b.style.left=startX+'px';
+    document.body.appendChild(b);
+    const dx=(Math.random()-.5)*(fromCenter?900:300);
+    const dur=3000+Math.random()*2500;
+    const rot=(Math.random()-.5)*720;
+    b.animate([
+      {transform:`translate(0,0) rotate(0deg)`,opacity:1},
+      {transform:`translate(${dx}px, ${window.innerHeight+80}px) rotate(${rot}deg)`,opacity:1}
+    ],{duration:dur,easing:'cubic-bezier(.3,.6,.6,1)'}).onfinish=()=>b.remove();
+  }
 }
+window.addEventListener('load',()=>drop(60,false));
 
-if(faultData)
-{
-    const records = faultData.split("|");
+const overlay=document.getElementById('overlay');
+const video=document.getElementById('video');
+const closeBtn=document.getElementById('close');
 
-    const tbody = document.querySelector("#faultTable tbody");
-
-    let displayIndex = 0;
-
-    records.forEach((record) =>
-    {
-        const fields = record.split(",");
-
-        if(fields.length < 6)
-            return;
-
-        const errorCode  = parseInt(fields[0]);
-        const statusCode = parseInt(fields[1]);
-
-        /* Decompress date: YYMMDD → DD/MM/YYYY format. */
-        const dateCompressed = fields[2];
-        const dateYY = dateCompressed.substring(0, 2);
-        const dateMM = dateCompressed.substring(2, 4);
-        const dateDD = dateCompressed.substring(4, 6);
-        const date = `${dateDD}/${dateMM}/20${dateYY}`;
-
-        /* Decompress time: HHMM → HH:MM format. */
-        const timeCompressed = fields[3];
-        const timeHH = timeCompressed.substring(0, 2);
-        const timeMM = timeCompressed.substring(2, 4);
-        const time = `${timeHH}:${timeMM}`;
-
-        /* errorCode is 1-based; SAC_FAULT_BITS_N4[0] is intentionally empty. */
-        const rawFaultName = SAC_FAULT_BITS_N4[errorCode] || "";
-
-        /* Mirror fault_report_row_create() condition:
-         * skip row if fault string is empty or starts with '0' (invalid entry). */
-        if(errorCode === 0 || rawFaultName === "")
-            return;
-
-        /* Truncate fault name to 40 characters (matches fault[40] = '\0'). */
-        const faultName = rawFaultName.substring(0, 40);
-
-        /* Decompress pressure: unit is in URL parameter (pu=B for bar, pu=P for PSI).
-         * "F" = probe failure (display "---")
-         * Otherwise, use value + unit from URL param */
-        let pressure;
-        if(fields[4] === "F")
-        {
-            pressure = "---";
-        }
-        else if(pressureUnit === "P")
-        {
-            pressure = fields[4] + " PSI";
-        }
-        else
-        {
-            pressure = fields[4] + " bar";  /* default to bar */
-        }
-
-        /* Decompress temperature: unit is in URL parameter (tu=C for Celsius, tu=H for Fahrenheit).
-         * "F" = probe failure (display "---")
-         * Otherwise, use value + unit from URL param */
-        let temp;
-        if(fields[5] === "F")
-        {
-            temp = "---";
-        }
-        else if(tempUnit === "H")
-        {
-            temp = fields[5] + "°F";
-        }
-        else
-        {
-            temp = fields[5] + "°C";  /* default to Celsius */
-        }
-
-        const statusName =
-            Compressor_Status_List[statusCode] || ("Status " + statusCode);
-
-        displayIndex++;
-
-        const row = document.createElement("tr");
-
-        row.innerHTML =
-            `<td>${displayIndex}</td>
-             <td>${faultName}</td>
-             <td>${date}</td>
-             <td>${time}</td>
-             <td>${pressure}</td>
-             <td>${temp}</td>
-             <td>${statusName}</td>`;
-
-        tbody.appendChild(row);
-
-        csvRows.push([
-            displayIndex,
-            faultName,
-            date,
-            time,
-            pressure,
-            temp,
-            statusName
-        ]);
-    });
+function openVideo(){
+  drop(45,true);
+  overlay.classList.add('open');
+  video.currentTime=0;
+  video.play().catch(()=>{}); // if autoplay is blocked, user can press play
 }
-
-/* -------------------- CSV Download -------------------- */
-
-function downloadCSV()
-{
-    let csv =
-"S.No,Fault Name,Date,Time,Pressure,Airend Outlet Temp,Status\n";
-
-    csvRows.forEach(row =>
-    {
-        csv += row.join(",") + "\n";
-    });
-
-    const blob = new Blob(
-        [csv],
-        {type: "text/csv;charset=utf-8;"}
-    );
-
-    const link = document.createElement("a");
-
-    link.href = URL.createObjectURL(blob);
-
-    link.download = csvFilename;
-
-    document.body.appendChild(link);
-
-    link.click();
-
-    document.body.removeChild(link);
+function closeVideo(){
+  overlay.classList.remove('open');
+  video.pause();
 }
-
+document.getElementById('heart').addEventListener('click',openVideo);
+closeBtn.addEventListener('click',closeVideo);
+overlay.addEventListener('click',e=>{if(e.target===overlay)closeVideo();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeVideo();});
 </script>
-
 </body>
 </html>
