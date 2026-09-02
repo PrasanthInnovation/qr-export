@@ -122,8 +122,10 @@
     width:min(880px,100%);
     animation:rise .5s ease;
   }
-  video{
+  #video{
     width:100%;
+    aspect-ratio:16/9;
+    border:none;
     border-radius:16px;
     box-shadow:0 30px 80px rgba(0,0,0,.5);
     background:#000;
@@ -148,7 +150,7 @@
   <main class="card">
     <div class="eyebrow">Hii Preety</div>
     <h1>Happy Birthday,<span class="name">Preity Kumari</span></h1>
-    <p class="msg">Happy birthday, you ❤️🎂 I honestly feel terrible that I forgot your birthday. I hope you're having a beautiful day, and I wish this year brings you so much happiness, peace, and everything you deserve. ❤️</p>
+    <p class="msg">Happy birthday ❤️🎂 I honestly feel terrible that I forgot your birthday. I hope you're having a beautiful day, and I wish this year brings you so much happiness, peace, and everything you deserve. ❤️</p>
     <span class="heart" id="heart" title="tap me!">💛</span>
     <span class="hint">tap the heart</span>
   </main>
@@ -156,10 +158,12 @@
   <div class="overlay" id="overlay">
     <div class="video-wrap">
       <button class="close" id="close" title="close">×</button>
-      <video id="video" controls playsinline>
-        <source src="video.mp4" type="video/mp4">
-        Your browser can't play this video.
-      </video>
+      <!-- Paste your Google Drive file ID below, between /d/ and /preview -->
+      <iframe id="video"
+              src=""
+              data-drive-id="1mA5H_V0p9rgvBxobN0HwCXrSxPMMaiJp"
+              allow="autoplay"
+              allowfullscreen></iframe>
     </div>
   </div>
 
@@ -197,16 +201,17 @@ window.addEventListener('load',()=>drop(60,false));
 const overlay=document.getElementById('overlay');
 const video=document.getElementById('video');
 const closeBtn=document.getElementById('close');
+const driveId=video.getAttribute('data-drive-id');
 
 function openVideo(){
   drop(45,true);
   overlay.classList.add('open');
-  video.currentTime=0;
-  video.play().catch(()=>{}); // if autoplay is blocked, user can press play
+  // load the Drive player (and start it) only when opened
+  video.src='https://drive.google.com/file/d/'+driveId+'/preview';
 }
 function closeVideo(){
   overlay.classList.remove('open');
-  video.pause();
+  video.src=''; // unload so the video stops playing
 }
 document.getElementById('heart').addEventListener('click',openVideo);
 closeBtn.addEventListener('click',closeVideo);
